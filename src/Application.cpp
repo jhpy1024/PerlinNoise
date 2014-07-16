@@ -5,7 +5,6 @@ Application::Application(int width, int height)
     , HEIGHT(height)
     , m_Window(sf::VideoMode(width, height), "Perlin Noise", sf::Style::Close)
 {
-
 }
 
 void Application::run()
