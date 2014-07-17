@@ -7,16 +7,8 @@
 class Noise
 {
     public:
-        static float getNoise(int x, int y, unsigned functionIndex);
-        static float getSmoothNoise(int x, int y, unsigned functionIndex);
-
-        static unsigned getNumNoiseFunctions();
-
-    private:
-        static float noiseFunction(int x, int y, unsigned functionIndex);
-
-    private:
-        static std::vector<std::vector<long>> m_Primes;
+        static float getNoise(float x, float y);
+        static float getPerlinNoise(float x, float y);
 };
 
 #endif

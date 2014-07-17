@@ -18,6 +18,7 @@ class Application
         const int HEIGHT;
 
         sf::RenderWindow m_Window;
+        sf::VertexArray m_Points;
 };
 
 #endif

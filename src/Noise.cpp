@@ -1,41 +1,30 @@
 #include "Noise.hpp"
+#include "Interpolation.hpp"
+
 #include <cassert>
+#include <iostream>
+#include <cmath>
 
-std::vector<std::vector<long>> Noise::m_Primes = 
+float Noise::getNoise(float x, float y)
 {
-    { 14557, 788913, 1376312323, 1073741827 },
-    { 15581, 788947, 1376312543, 1073741789 },
-    { 15683, 789137, 1376312783, 1073741971 },
-    { 15731, 789221, 1376312589, 1073741824 },
-    { 16069, 789533, 1377313061, 1073842787 },
-    { 16253, 789721, 1377313391, 1073843167 }
-};
-
-float Noise::getNoise(int x, int y, unsigned functionIndex)
-{
-    assert(functionIndex < m_Primes.size());
-    return noiseFunction(x, y, functionIndex);
-}
-
-float Noise::noiseFunction(int x, int y, unsigned functionIndex)
-{
-    auto& primes = m_Primes[functionIndex];
-
-    int n = x + y * 57;
+    int n = (int) x + (int) y * 57;
     n = (n << 13) ^ n;
-    return (1.f - ((n * (n * n * primes[0] + primes[1]) + primes[2]) & 0x7fffffff) / (float) primes[3]);
+    int nn = (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;
+    return 1.f - ((float) nn / 1073741824.f);
 }
 
-float Noise::getSmoothNoise(int x, int y, unsigned functionIndex)
+float Noise::getPerlinNoise(float x, float y)
 {
-    float corners = (getNoise(x-1, y-1, functionIndex) + getNoise(x+1, y-1, functionIndex) + getNoise(x+1, y+1, functionIndex) + getNoise(x-1, y+1, functionIndex)) / 16.f;
-    float sides = (getNoise(x-1, y, functionIndex) + getNoise(x, y-1, functionIndex) + getNoise(x+1, y, functionIndex) + getNoise(x, y+1, functionIndex)) / 8.f;
-    float center = getNoise(x, y, functionIndex) / 4.f;
+    auto flooredX = std::floor(x);
+    auto flooredY = std::floor(y);
 
-    return corners + sides + center;
-}
+    auto s = getNoise(flooredX, flooredY);
+    auto t = getNoise(flooredX + 1, flooredY);
+    auto u = getNoise(flooredX, flooredY + 1);
+    auto v = getNoise(flooredX + 1, flooredY + 1);
 
-unsigned Noise::getNumNoiseFunctions()
-{
-    return m_Primes.size();
+    auto lerped1 = Interpolation::cosine(s, t, x - flooredX);
+    auto lerped2 = Interpolation::cosine(u, v, x - flooredX);
+
+    return Interpolation::cosine(lerped1, lerped2, y - flooredY);
 }
