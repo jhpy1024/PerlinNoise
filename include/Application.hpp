@@ -1,6 +1,8 @@
 #ifndef APPLICATION_HPP
 #define APPLICATION_HPP
 
+#include "PerlinNoise.hpp"
+
 #include <SFML/Graphics.hpp>
 
 class Application
@@ -27,6 +29,8 @@ class Application
         sf::Texture m_Grass;
         sf::Texture m_Water;
         std::vector<sf::RectangleShape> m_Sprites;
+
+        PerlinNoise m_PerlinNoise;
 };
 
 #endif

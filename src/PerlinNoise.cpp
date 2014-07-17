@@ -1,11 +1,40 @@
-#include "Noise.hpp"
+#include "PerlinNoise.hpp"
 #include "Interpolation.hpp"
 
 #include <cassert>
 #include <iostream>
 #include <cmath>
 
-float Noise::getNoise(float x, float y)
+PerlinNoise::PerlinNoise(float seed)
+    : m_Seed(seed)
+{
+
+}
+
+float PerlinNoise::operator()(float x, float y, float zoom, float persistence, unsigned numOctaves)
+{
+    x += m_Seed;
+    y += m_Seed;
+
+    float noise = 0.f;
+
+    for (unsigned i = 0; i < numOctaves; ++i)
+    {
+        float frequency = std::pow(2.f, (float) i);
+        float amplitude = std::pow(persistence, (float) i);
+
+        noise += getPerlinNoise(x * frequency / zoom, y * frequency / zoom) * amplitude;
+    }
+
+    return noise;
+}
+
+void PerlinNoise::setSeed(float seed)
+{
+    m_Seed = seed;
+}
+
+float PerlinNoise::getNoise(float x, float y) const
 {
     int n = (int) x + (int) y * 57;
     n = (n << 13) ^ n;
@@ -13,7 +42,7 @@ float Noise::getNoise(float x, float y)
     return 1.f - ((float) nn / 1073741824.f);
 }
 
-float Noise::getPerlinNoise(float x, float y)
+float PerlinNoise::getPerlinNoise(float x, float y) const
 {
     auto flooredX = std::floor(x);
     auto flooredY = std::floor(y);

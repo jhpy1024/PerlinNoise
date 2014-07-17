@@ -1,5 +1,4 @@
 #include "Application.hpp"
-#include "Noise.hpp"
 
 Application::Application(int width, int height)
     : WIDTH(width)
@@ -74,26 +73,17 @@ void Application::loadTextures()
 
 void Application::createMap()
 {
+    m_PerlinNoise.setSeed((float) rand() / 100);
+
     m_Sprites.clear();
     m_Sprites.reserve((WIDTH / 50) * (HEIGHT / 50));
-    unsigned numOctaves = 2;
-    float persistence = 0.5f;
-    float zoom = 10.f;
 
     sf::RectangleShape sprite;
     for (int x = 0; x < WIDTH / 10; ++x)
     {
         for (int y = 0; y < HEIGHT / 10; ++y)
         {
-            float noise = 0.f;
-            for (unsigned o = 0; o < numOctaves - 1; ++o)
-            {
-                float frequency = std::pow(2.f, (float) o);
-                float amplitude = std::pow(persistence, (float) o);
-
-                noise += Noise::getPerlinNoise(x * frequency / zoom, y * frequency / zoom) * amplitude;
-            }
-
+            float noise = m_PerlinNoise(x, y, 5.f, 0.5f, 2);
             float color = noise * 128.f + 128.f;
             if (color > 255.f) color = 255.f;
             else if (color < 0.f) color = 0.f;
