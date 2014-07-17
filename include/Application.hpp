@@ -14,11 +14,19 @@ class Application
         void draw();
 
     private:
+        void handleKeyPress(const sf::Event& event);
+        void loadTextures();
+        void createMap();
+
+    private:
         const int WIDTH;
         const int HEIGHT;
 
         sf::RenderWindow m_Window;
-        sf::VertexArray m_Points;
+        
+        sf::Texture m_Grass;
+        sf::Texture m_Water;
+        std::vector<sf::RectangleShape> m_Sprites;
 };
 
 #endif
