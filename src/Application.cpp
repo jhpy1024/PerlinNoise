@@ -69,11 +69,13 @@ void Application::loadTextures()
 {
     m_Grass.loadFromFile("res/grass.png");
     m_Water.loadFromFile("res/water.png");
+    m_Sand.loadFromFile("res/sand.png");
+    m_Stone.loadFromFile("res/stone.png");
 }
 
 void Application::createMap()
 {
-    m_PerlinNoise.setSeed((float) rand() / 100);
+    m_PerlinNoise.setSeed((float) rand() / 1000);
 
     m_Sprites.clear();
     m_Sprites.reserve((WIDTH / 50) * (HEIGHT / 50));
@@ -90,7 +92,18 @@ void Application::createMap()
 
             sprite.setPosition(x * 10.f, y * 10.f);
             sprite.setSize({ 10.f, 10.f });
-            sprite.setTexture(color > 70 ? &m_Grass : &m_Water);
+
+            if (color < 140)
+                sprite.setTexture(&m_Water);
+            else if (color < 180)
+                sprite.setTexture(&m_Sand);
+            else if (color >= 195 && color <= 205)
+                sprite.setTexture(&m_Stone);
+            else if (color < 220)
+                sprite.setTexture(&m_Grass);
+            else 
+                sprite.setTexture(&m_Stone);
+
             m_Sprites.push_back(sprite);
         }
     }

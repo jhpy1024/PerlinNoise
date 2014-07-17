@@ -28,6 +28,8 @@ class Application
         
         sf::Texture m_Grass;
         sf::Texture m_Water;
+        sf::Texture m_Sand;
+        sf::Texture m_Stone;
         std::vector<sf::RectangleShape> m_Sprites;
 
         PerlinNoise m_PerlinNoise;
