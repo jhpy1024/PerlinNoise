@@ -13,7 +13,10 @@ class Noise
         static unsigned getNumNoiseFunctions();
 
     private:
-        static std::vector<std::function<float(int, int)>> m_NoiseFunctions;
+        static float noiseFunction(int x, int y, unsigned functionIndex);
+
+    private:
+        static std::vector<std::vector<long>> m_Primes;
 };
 
 #endif

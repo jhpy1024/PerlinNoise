@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "Noise.hpp"
 
 Application::Application(int width, int height)
     : WIDTH(width)
