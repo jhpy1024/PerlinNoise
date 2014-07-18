@@ -2,6 +2,7 @@
 #define APPLICATION_HPP
 
 #include "PerlinNoise.hpp"
+#include "Camera.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -20,13 +21,6 @@ class Application
         void createMap();
 
         void handleKeyPress(const sf::Event& event);
-        void moveUp();
-        void moveDown();
-        void moveLeft();
-        void moveRight();
-        void zoomIn();
-        void zoomOut();
-        void resetZoom();
 
     private:
         const int WIDTH;
@@ -34,10 +28,9 @@ class Application
         const int MAP_WIDTH;
         const int MAP_HEIGHT;
         const float TILE_SIZE;
-        const float ZOOM_FACTOR;
 
         sf::RenderWindow m_Window;
-        sf::View m_View;
+        Camera m_Camera;
         
         sf::Texture m_Grass;
         sf::Texture m_Water;

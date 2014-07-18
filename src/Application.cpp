@@ -8,12 +8,13 @@ Application::Application(int width, int height)
     , MAP_WIDTH(500)
     , MAP_HEIGHT(MAP_WIDTH)
     , TILE_SIZE(10.f)
-    , ZOOM_FACTOR(0.1f)
     , m_Window(sf::VideoMode(width, height), "Perlin Noise", sf::Style::Close)
-    , m_View({ WIDTH / 2.f, HEIGHT / 2.f }, { WIDTH, HEIGHT })
+    , m_Camera({ 0.f, 0.f }, { WIDTH, HEIGHT })
 {
     loadTextures();
     createMap();
+
+    m_Camera.setBounds(sf::FloatRect(0.f, 0.f, MAP_WIDTH * TILE_SIZE, MAP_HEIGHT * TILE_SIZE));
 }
 
 void Application::run()
@@ -53,21 +54,19 @@ void Application::update()
 void Application::draw()
 {
     m_Window.clear();
-    m_Window.setView(m_View);
+    m_Window.setView(m_Camera);
 
-    for (unsigned y = 0; y < m_Sprites.size(); ++y)
+    unsigned numTilesDrawn = 0;
+
+    for (int y = 0; y < MAP_HEIGHT; ++y)
     {
-        for (unsigned x = 0; x < m_Sprites[y].size(); ++x)
+        for (int x = 0; x < MAP_WIDTH; ++x)
         {
-            auto viewTopLeft = sf::Vector2f(m_View.getCenter().x - m_View.getSize().x / 2.f, m_View.getCenter().y - m_View.getSize().y / 2.f);
-
-            bool outOfBounds = x * TILE_SIZE < viewTopLeft.x
-                            || y * TILE_SIZE < viewTopLeft.y
-                            || x * TILE_SIZE > viewTopLeft.x + m_View.getSize().x
-                            || y * TILE_SIZE > viewTopLeft.y + m_View.getSize().y;
-
-            if (!outOfBounds)
+            if (m_Camera.pointInView(x * TILE_SIZE, y * TILE_SIZE))
+            {
                 m_Window.draw(m_Sprites[y][x]);
+                ++numTilesDrawn;
+            }
         }
     }
 
@@ -83,79 +82,32 @@ void Application::handleKeyPress(const sf::Event& event)
             break;
         case sf::Keyboard::H:
         case sf::Keyboard::Left:
-            moveLeft();
+            m_Camera.moveLeft();
             break;
         case sf::Keyboard::L:
         case sf::Keyboard::Right:
-            moveRight();
+            m_Camera.moveRight();
             break;
         case sf::Keyboard::J:
         case sf::Keyboard::Down:
-            moveDown();
+            m_Camera.moveDown();
             break;
         case sf::Keyboard::K:
         case sf::Keyboard::Up:
-            moveUp();
+            m_Camera.moveUp();
             break;
         case sf::Keyboard::I:
-            zoomIn();
+            m_Camera.zoomIn();
             break;
         case sf::Keyboard::O:
-            zoomOut();
+            m_Camera.zoomOut();
             break;
         case sf::Keyboard::P:
-            resetZoom();
+            m_Camera.reset();
             break;
         default:
             break;
     }
-}
-
-void Application::moveUp()
-{
-    auto viewTopLeft = sf::Vector2f(m_View.getCenter().x - m_View.getSize().x / 2.f, m_View.getCenter().y - m_View.getSize().y / 2.f);
-
-    if (viewTopLeft.y > 0.f)
-        m_View.move(0.f, -TILE_SIZE);
-}
-
-void Application::moveDown()
-{
-    auto viewTopLeft = sf::Vector2f(m_View.getCenter().x - m_View.getSize().x / 2.f, m_View.getCenter().y - m_View.getSize().y / 2.f);
-
-    if (viewTopLeft.y + m_View.getSize().y < TILE_SIZE * MAP_HEIGHT)
-        m_View.move(0.f, TILE_SIZE);
-}
-
-void Application::moveLeft()
-{
-    auto viewTopLeft = sf::Vector2f(m_View.getCenter().x - m_View.getSize().x / 2.f, m_View.getCenter().y - m_View.getSize().y / 2.f);
-
-    if (viewTopLeft.x > 0.f)
-        m_View.move(-TILE_SIZE, 0.f);
-}
-
-void Application::moveRight()
-{
-    auto viewTopLeft = sf::Vector2f(m_View.getCenter().x - m_View.getSize().x / 2.f, m_View.getCenter().y - m_View.getSize().y / 2.f);
-
-    if (viewTopLeft.x + m_View.getSize().x < TILE_SIZE * MAP_WIDTH)
-        m_View.move(TILE_SIZE, 0.f);
-}
-
-void Application::zoomIn()
-{
-    m_View.zoom(1.f - ZOOM_FACTOR);
-}
-
-void Application::zoomOut()
-{
-    m_View.zoom(1.f + ZOOM_FACTOR);
-}
-
-void Application::resetZoom()
-{
-    m_View.setSize(WIDTH, HEIGHT);
 }
 
 void Application::loadTextures()
