@@ -56,17 +56,14 @@ void Application::draw()
     m_Window.clear();
     m_Window.setView(m_Camera);
 
-    unsigned numTilesDrawn = 0;
-
     for (int y = 0; y < MAP_HEIGHT; ++y)
     {
         for (int x = 0; x < MAP_WIDTH; ++x)
         {
-            if (m_Camera.pointInView(x * TILE_SIZE, y * TILE_SIZE))
-            {
+            bool shouldDraw = m_Camera.pointInView((x + 0.5f) * TILE_SIZE, (y + 0.5f) * TILE_SIZE);;
+
+            if (shouldDraw)
                 m_Window.draw(m_Sprites[y][x]);
-                ++numTilesDrawn;
-            }
         }
     }
 

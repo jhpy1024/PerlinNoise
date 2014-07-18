@@ -27,7 +27,7 @@ class Camera
         }
 
     private:
-        bool inBounds() const;
+        bool inBounds(const sf::Vector2f& point) const;
 
     private:
         const float ZOOM_FACTOR;
