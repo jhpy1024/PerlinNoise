@@ -30,6 +30,8 @@ void MapRenderer::changeMap(Map* newMap)
 
 void MapRenderer::buildVertexArray()
 {
+    // The map hasn't generated any tiles yet so trying to access
+    // the tiles would result in a segfault
     if (m_Map->m_Tiles == nullptr)
         return;
 
@@ -53,14 +55,14 @@ void MapRenderer::buildVertexArray()
             vertex.texCoords = TEX_COORDS[tileType][1];
             m_Verts.append(vertex);
 
-            // Bottom left
-            vertex.position = { x * m_Map->TILE_SIZE, (y + 1) * m_Map->TILE_SIZE };
-            vertex.texCoords = TEX_COORDS[tileType][2];
-            m_Verts.append(vertex);
-
             // Bottom right
             vertex.position = { (x + 1) * m_Map->TILE_SIZE, (y + 1) * m_Map->TILE_SIZE };
             vertex.texCoords = TEX_COORDS[tileType][3];
+            m_Verts.append(vertex);
+
+            // Bottom left
+            vertex.position = { x * m_Map->TILE_SIZE, (y + 1) * m_Map->TILE_SIZE };
+            vertex.texCoords = TEX_COORDS[tileType][2];
             m_Verts.append(vertex);
         }
     }
