@@ -7,10 +7,13 @@ Application::Application(int width, int height)
     , HEIGHT(height)
     , m_Window(sf::VideoMode(width, height), "Perlin Noise", sf::Style::Close)
     , m_Camera({ 0.f, 0.f }, { WIDTH, HEIGHT })
-    , m_Map(100, 100, 10)
+    , m_Map(1000, 1000, 10)
     , m_MapRenderer(&m_Map)
 {
     m_Camera.setBounds(sf::FloatRect(0.f, 0.f, m_Map.getWidth() * m_Map.getTileSize(), m_Map.getHeight() * m_Map.getTileSize()));
+
+    m_Map.generate();
+    m_MapRenderer.changeMap(&m_Map);
 }
 
 void Application::run()
